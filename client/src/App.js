@@ -10,14 +10,21 @@ function App() {
   React.useEffect(() => {
     fetch("/api")
       .then((res) => res.json())
-      .then((data) => setData(data.message));
+      .then((data) => setData(data));
   }, []);
 
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>{!data ? "Loading..." : data}</p>
+        <div>{!data ? "Loading..." :
+          <div>
+            <p>Message: {data.message}</p>
+            <p>Encrypted: {data.encrypted}</p>
+            <p>Is Message the same as encrypted? {data.result ? "Yes" : "No"}</p>
+          </div>
+
+        }</div>
       </header>
     </div>
   );
