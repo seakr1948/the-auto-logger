@@ -6,10 +6,6 @@ const vehicleSchema = Schema({
     make: String,
     model: String,
     year: Number,
-    nickname: {
-        type: String,
-        default: null,
-    },
     recent_mpg: {
         type: Number,
         default: 0,

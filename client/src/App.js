@@ -1,31 +1,31 @@
 // client/src/App.js
-
-import React from "react";
-import logo from "./logo.svg";
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap';
 import "./App.css";
 
-function App() {
-  const [data, setData] = React.useState(null);
+import React from "react";
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import LandingPage from './Components/LandingPage';
+import Layout from './Components/Layout';
+import ShowVehicle from './Components/Vehicles/ShowVehicle';
+import AllVehicles from './Components/Vehicles/AllVehicles';
+import AddVehicle from './Components/Vehicles/AddVehicle';
 
-  React.useEffect(() => {
-    fetch("/api")
-      .then((res) => res.json())
-      .then((data) => setData(data));
-  }, []);
+function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <div>{!data ? "Loading..." :
-          <div>
-            <p>Message: {data.message}</p>
-            <p>Encrypted: {data.encrypted}</p>
-            <p>Is Message the same as encrypted? {data.result ? "Yes" : "No"}</p>
-          </div>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<LandingPage />} />
+          <Route path='/vehicles' element={<AllVehicles />} />
+          <Route path='/vehicles/new' element={<AddVehicle />} />
+          <Route path='/vehicles/:id' element={<Layout />} >
+            <Route index element={<ShowVehicle />} />
 
-        }</div>
-      </header>
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
