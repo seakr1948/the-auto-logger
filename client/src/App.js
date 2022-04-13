@@ -9,7 +9,8 @@ import LandingPage from './Components/LandingPage';
 import Layout from './Components/Layout';
 import ShowVehicle from './Components/Vehicles/ShowVehicle';
 import AllVehicles from './Components/Vehicles/AllVehicles';
-import AddVehicle from './Components/Vehicles/AddVehicle';
+import AddVehicle from './Components/Vehicles/NewVehicle';
+import NewFuelLog from './Components/FuelLogs/NewFuelLog';
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
           <Route path='/vehicles/new' element={<AddVehicle />} />
           <Route path='/vehicles/:id' element={<Layout />} >
             <Route index element={<ShowVehicle />} />
+            <Route path='fuellogs/new' element={<NewFuelLog />} />
 
           </Route>
         </Routes>

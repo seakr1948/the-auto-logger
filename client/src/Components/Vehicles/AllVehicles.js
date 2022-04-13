@@ -4,6 +4,13 @@ import { Link } from 'react-router-dom'
 
 const AllVehicles = () => {
 
+    function deleteVehicle(vehicle_id) {
+        axios.delete(`/vehicles/${vehicle_id}`)
+            .then(setVehicles(prev =>
+                prev.filter(vehicle => vehicle._id !== vehicle_id)
+            ))
+    }
+
     const [vehicles, setVehicles] = useState([]);
     useEffect(() => {
         axios.get('/vehicles')
@@ -41,7 +48,7 @@ const AllVehicles = () => {
                                             <td>{element.make}</td>
                                             <td>{element.model}</td>
                                             <td><Link className='btn btn-success' to={`/vehicles/${element._id}`}>Select</Link></td>
-                                            <td><Link className='btn btn-danger' to={`/vehicles/${element._id}/delete`}>Delete</Link></td>
+                                            <td><button className='btn btn-danger' onClick={() => deleteVehicle(element._id)}>Delete</button></td>
                                         </tr>
                                     )
 

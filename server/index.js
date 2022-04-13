@@ -85,6 +85,7 @@ app.get('/vehicles/:id', async (req, res) => {
     res.json(result);
 })
 app.delete('/vehicles/:id', async (req, res) => {
+    console.log("deleting vehicle")
     const { id } = req.params;
     const deletedVehicle = await Vehicle.findByIdAndDelete(id);
     console.log(deletedVehicle);
