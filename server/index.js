@@ -134,6 +134,10 @@ app.get('/api', async (req, res) => {
     })
 })
 
+app.get('/user', async (req, res) => {
+    res.json(true);
+})
+
 // All other GET requests not handled before will return our React app
 app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));

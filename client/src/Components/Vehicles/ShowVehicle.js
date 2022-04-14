@@ -21,6 +21,7 @@ const ShowVehicle = () => {
 
 
     const [mpgArray, setMPGArray] = useState([]);
+    const [currentMileage, setCurrentMileage] = useState('');
 
     useEffect(() => {
         axios.get(`/vehicles/${id}`,
@@ -32,7 +33,7 @@ const ShowVehicle = () => {
                 setVehicle(res.data);
                 const fuel_logs = res.data.fuel_logs;
                 setFuelLogs(fuel_logs);
-
+                setCurrentMileage(fuel_logs[0].current_mileage.toString());
 
                 let best_mpg = 0;
                 let overall_mpg = 0;
@@ -83,7 +84,7 @@ const ShowVehicle = () => {
                             {vehicle.year} {vehicle.make} {vehicle.model}
                         </h1>
                         {/* MPG Bar graph */}
-                        <div class="container">
+                        <div className="container">
                             <div className='container bg-dark p-3 my-3 rounded-3'>
                                 <Bar
                                     datasetIdKey='id'
@@ -145,36 +146,41 @@ const ShowVehicle = () => {
                             </div>
 
                             {/* Vehicle basic stats */}
-                            <div class="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
-                                <div class="col">
-                                    <div class="p-3 border bg-light">
+                            <div className="row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+                                <div className="col">
+                                    <div className="p-3 border bg-light">
                                         <p className='text-center fw-bold'>Recent MPG <span className='d-block fw-normal'>{recentMPG}</span></p>
                                     </div>
                                 </div>
-                                <div class="col">
-                                    <div class="p-3 border bg-light">
+                                <div className="col">
+                                    <div className="p-3 border bg-light">
                                         <p className='text-center fw-bold'>Best MPG <span className='d-block fw-normal'>{bestMPG}</span></p>
 
                                     </div>
                                 </div>
-                                <div class="col">
-                                    <div class="p-3 border bg-light">
+                                <div className="col">
+                                    <div className="p-3 border bg-light">
                                         <p className='text-center fw-bold'>Overall MPG <span className='d-block fw-normal'>{overallMPG}</span></p>
                                     </div>
                                 </div>
-                                <div class="col">
-                                    <div class="p-3 border bg-light">
-                                        <p className='text-center fw-bold'>Total Miles <span className='d-block fw-normal'>{totalMiles}</span></p>
+                                <div className="col">
+                                    <div className="p-3 border bg-light">
+                                        <p className='text-center fw-bold'>Total Miles Tracked<span className='d-block fw-normal'>{totalMiles}</span></p>
                                     </div>
                                 </div>
-                                <div class="col">
-                                    <div class="p-3 border bg-light">
+                                <div className="col">
+                                    <div className="p-3 border bg-light">
                                         <p className='text-center fw-bold'>Total Gallons <span className='d-block fw-normal'>{totalGallons}</span></p>
                                     </div>
                                 </div>
-                                <div class="col">
-                                    <div class="p-3 border bg-light">
+                                <div className="col">
+                                    <div className="p-3 border bg-light">
                                         <p className='text-center fw-bold'>Total Price <span className='d-block fw-normal'>${totalPrice}</span></p>
+                                    </div>
+                                </div>
+                                <div className="col">
+                                    <div className="p-3 border bg-light">
+                                        <p className='text-center fw-bold'>Last Reported Odometer <span className='d-block fw-normal'>{currentMileage} Miles</span></p>
                                     </div>
                                 </div>
 
@@ -183,12 +189,12 @@ const ShowVehicle = () => {
 
                         <div className='my-3'>
                             <h2>Fuel Logs</h2>
-                            <Link className='btn btn-success' to={`/vehicles/${id}/fuellogs/new`}>Add Fuel Log</Link>
+                            <Link className='btn btn-success' to={`/vehicles/${id}/fuellogs/new`} state={{ current_mileage: fuelLogs[0].current_mileage }}>Add Fuel Log</Link>
 
                             {
                                 fuelLogs.map((element, index) => {
                                     return (
-                                        <div className='row m-3 border border-2 border-dark rounded-3 fs-5'>
+                                        <div className='row m-3 border border-2 border-dark rounded-3 fs-5' key={index}>
                                             <div className="col border-end"> <p className='fw-bold'>MPG <span className='d-block fw-normal'>{element.mpg}</span></p>  </div>
                                             <div className="col border-end"> <p className='fw-bold'>Total Miles <span className='d-block fw-normal'>{element.total_miles}</span></p> </div>
                                             <div className="col border-end"> <p className='fw-bold'>Total Gallons <span className='d-block fw-normal'>{element.total_gallons.toFixed(2)}</span></p></div>

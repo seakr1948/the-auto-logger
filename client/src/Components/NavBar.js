@@ -1,7 +1,21 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import AuthContext from '../Context/AuthProvider';
 
 const NavBar = () => {
+
+    const { setAuth } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    function logOut() {
+        sessionStorage.setItem("isAuthenticated", '');
+        setAuth(false);
+        navigate('/');
+    }
+
+
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <div className="container-fluid">
@@ -16,6 +30,9 @@ const NavBar = () => {
                         </li>
                     </ul>
 
+                </div>
+                <div>
+                    <button className='btn btn-info' onClick={() => logOut()}>Log Out</button>
                 </div>
             </div>
         </nav>
