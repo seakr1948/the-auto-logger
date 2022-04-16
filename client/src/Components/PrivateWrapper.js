@@ -6,10 +6,9 @@ import AuthContext from '../Context/AuthProvider';
 
 const PrivateWrapper = ({ user }) => {
 
-    const { auth } = useContext(AuthContext);
-
+    const auth = sessionStorage.getItem('token');
     return (
-        auth ? <Outlet /> : <Navigate to="/login" />
+        (auth) ? <Outlet /> : <Navigate to="/login" />
     )
 };
 

@@ -16,6 +16,7 @@ import NewFuelLog from './Components/FuelLogs/NewFuelLog';
 import PrivateWrapper from './Components/PrivateWrapper';
 import LoginForm from './Components/LoginForm';
 import RegisterForm from './Components/RegisterForm';
+import EditFuelLog from './Components/FuelLogs/EditFuelLog';
 
 function App() {
 
@@ -34,7 +35,7 @@ function App() {
               <Route path='new' element={<AddVehicle />} />
               <Route path=':id' element={<ShowVehicle />} />
               <Route path=':id/fuellogs/new' element={<NewFuelLog />} />
-
+              <Route path=':id/fuellogs/:log_id' element={<EditFuelLog />} />
             </Route >
           </Route>
 

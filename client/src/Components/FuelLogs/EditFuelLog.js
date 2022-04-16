@@ -1,38 +1,25 @@
-import React, { useEffect } from 'react'
-import { useState } from 'react';
+import React from 'react'
+import { useState, useEffect } from 'react';
 import { handleForm } from '../../Utils/Utils'
-import { useLocation, useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { headerConfig } from '../../Utils/Utils';
 
-const NewFuelLog = () => {
+const EditFuelLog = () => {
     const navigate = useNavigate();
     const header_config = headerConfig();
-    const { id } = useParams();
-    const data = useLocation();
+    const { id, log_id } = useParams();
     const [pastMileage, setPastMileage] = useState('');
     const [currentMileage, setCurrentMileage] = useState('');
     const [costPerGallon, setCostPerGallon] = useState('');
     const [totalGallons, setTotalGallons] = useState('');
     const [totalPrice, setTotalPrice] = useState('');
 
-    useEffect(() => {
-        setPastMileage(data.state.current_mileage || 0);
-    }, [])
-
-    useEffect(() => {
-        if (costPerGallon !== '' && totalGallons !== '') {
-            setTotalPrice(parseFloat(costPerGallon * totalGallons).toFixed(2));
-        } else {
-            setTotalPrice('')
-        }
-    }, [costPerGallon, totalGallons]);
-
-    function addFuelLog() {
+    function editFuelLog() {
         const total_miles = (currentMileage - pastMileage)
         const mpg = total_miles / totalGallons;
 
-        axios.post(`/vehicles/${id}/fuellogs/new`,
+        axios.patch(`/vehicles/${id}/fuellogs/${log_id}`,
             {
                 current_mileage: parseInt(currentMileage),
                 past_mileage: parseInt(pastMileage),
@@ -49,11 +36,34 @@ const NewFuelLog = () => {
             .then(navigate(`/vehicles/${id}`))
     }
 
+    useEffect(() => {
+        axios.get(`/vehicles/${id}/fuellogs/${log_id}`,
+            {
+                headers: header_config,
+                withCredentials: true
+            }).then(res => {
+                const fuel_log = res.data;
+                setPastMileage(fuel_log.past_mileage)
+                setCurrentMileage(fuel_log.current_mileage)
+                setCostPerGallon(fuel_log.cost_per_gallon)
+                setTotalGallons(fuel_log.total_gallons)
+                setTotalPrice(fuel_log.total_price)
+            })
+    }, [])
+
+    useEffect(() => {
+        if (costPerGallon !== '' && totalGallons !== '') {
+            setTotalPrice(parseFloat(costPerGallon * totalGallons).toFixed(2));
+        } else {
+            setTotalPrice('')
+        }
+    }, [costPerGallon, totalGallons]);
+
     return (
         <div className='container'>
-            <h1>Add New Fuel Log</h1>
+            <h1>Edit Fuel Log</h1>
             <Link className='btn btn-success my-3' to={`/vehicles/${id}`}>Back To Vehicle</Link>
-            <form onSubmit={e => handleForm(e, addFuelLog)} >
+            <form onSubmit={e => handleForm(e, editFuelLog)} >
                 <label className='form-label' htmlFor="past-mileage">Past Mileage</label>
                 <input required className='form-control' type="number" min={0} name="past-mileage" id="past-mileage"
                     inputMode='number'
@@ -91,4 +101,4 @@ const NewFuelLog = () => {
     )
 }
 
-export default NewFuelLog
+export default EditFuelLog

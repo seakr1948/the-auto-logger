@@ -3,3 +3,9 @@ module.exports.handleForm = function (e, func) {
     func();
 }
 
+module.exports.headerConfig = () => {
+    const token = sessionStorage.getItem("token") || '';
+    return {
+        "authorization": token,
+    }
+}

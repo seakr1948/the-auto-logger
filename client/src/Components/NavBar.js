@@ -10,8 +10,8 @@ const NavBar = () => {
     const navigate = useNavigate();
 
     function logOut() {
-        sessionStorage.setItem("isAuthenticated", '');
-        setAuth(false);
+        sessionStorage.setItem("token", '');
+        setAuth('');
         navigate('/');
     }
 

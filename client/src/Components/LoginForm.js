@@ -13,6 +13,17 @@ const LoginForm = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
+    function getUser() {
+        axios.get('/user',
+            {
+                withCredentials: true,
+            })
+            .then(res => {
+                console.log(res.data);
+
+            })
+    }
+
     function login() {
         axios.post('/login', {
             username,
@@ -24,8 +35,9 @@ const LoginForm = () => {
             .then(res => {
                 const result = res.data;
                 if (result) {
-                    sessionStorage.setItem("isAuthenticated", true);
-                    setAuth(true);
+                    console.log(result.token)
+                    sessionStorage.setItem("token", result.token);
+                    setAuth(result.token);
                     navigate('/vehicles');
                 } else {
                     console.error("Errr with password or username")
@@ -49,7 +61,6 @@ const LoginForm = () => {
                 />
                 <button className='btn btn-success mt-3'>Add User</button>
             </form>
-
         </div>
     )
 }

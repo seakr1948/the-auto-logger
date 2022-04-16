@@ -1,19 +1,38 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { headerConfig } from '../../Utils/Utils';
 
 const AllVehicles = () => {
 
+    const header_config = headerConfig();
+    const [vehicles, setVehicles] = useState([]);
+
     function deleteVehicle(vehicle_id) {
-        axios.delete(`/vehicles/${vehicle_id}`)
+        axios.delete(`/vehicles/${vehicle_id}`,
+            {
+                withCredentials: true,
+                headers: header_config,
+            })
             .then(setVehicles(prev =>
                 prev.filter(vehicle => vehicle._id !== vehicle_id)
             ))
     }
 
-    const [vehicles, setVehicles] = useState([]);
+    function getUser() {
+        axios.get('/user',
+        )
+            .then(res => {
+                console.log(res.data);
+
+            })
+    }
     useEffect(() => {
-        axios.get('/vehicles')
+        axios.get('/vehicles',
+            {
+                headers: header_config,
+                withCredentials: true,
+            })
             .then(res => setVehicles(res.data))
     }, [])
 

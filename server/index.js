@@ -5,21 +5,25 @@ const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT || 3001;
 
 // Imports
-
 const express = require("express");
 const app = express();
 const mongoose = require('mongoose');
 const path = require('path');
-
-
+const passport = require('passport');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
-
+const LocalStrategy = require('passport-local').Strategy;
+let loc = require('list-of-cars');
+loc.getListSync();
+let list = loc.getCarsByMakeObj();
 
 // Models
 const Vehicle = require('./models/Vehicle.model');
 const User = require('./models/User.model');
 const FuelLog = require('./models/FuelLog.model');
 const Message = require('./models/Message.model');
+const { generateAccessToken, validateToken } = require('../client/src/middleware/Validation');
 
 // Mongoose connection
 mongoose.connect(MONGO_URL, {
@@ -41,64 +45,111 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
 
-
+// Routes
 app.post("/register", async (req, res) => {
-    const newUser = User(req.body);
-    await newUser.save();
-
-    res.send("User Created");
+    console.log("Registering User");
+    const { username } = req.body;
+    User.findOne({ username }, async (err, doc) => {
+        if (err) throw err;
+        console.log(doc);
+        if (doc) {
+            console.log("User already exists")
+            return res.send("User already exists")
+        }
+        if (!doc) {
+            const newUser = User(req.body);
+            await newUser.save();
+            return res.send("New User Created");
+        }
+    })
 })
-app.post("/login", async (req, res) => {
+
+app.post("/login", async (req, res, next) => {
     const { username, password } = req.body;
+    console.log(req.body);
 
-    const user = await User.findOne({ username: username })
-
-    console.log(password, user.password);
-
+    const user = await User.findOne({ username });
+    console.log(user.password, password)
     const result = await bcrypt.compare(password, user.password);
+    console.log(result)
     if (result) {
-        res.send("Logged in");
+        console.log("Logged In");
+        const token = generateAccessToken(user.username);
+        res.json({
+            token: `Bearer ${token}`
+        })
     } else {
-        res.send("Incorrect username or password");
+        console.log("Wrong Username/Password");
+        res.status(401).json("Username/Password Invalid")
     }
 
 })
+
 app.get("/user", (req, res) => {
-
-    res.send(true);
+    console.log(req.user);
+    res.send(req.user);
 })
 
+app.get("/carlist", async (req, res) => {
+    const makelist = await loc.getCarMakes();
+    res.json({
+        make_list: makelist
+    })
+})
+
+app.get("/getmake", async (req, res) => {
+
+    let { year, make } = req.query;
+    year = parseInt(year);
+    if (year !== '' && make !== '') {
 
 
+        const filtered = list[make].filter((element) => {
+            return element.Year === year
+        })
+        res.send(filtered);
+    } else {
+        res.send([])
+    }
 
+})
 
-
-app.get('/vehicles', async (req, res) => {
+app.get('/vehicles', validateToken, async (req, res) => {
     console.log("Getting vehicles");
-    const results = await Vehicle.find({});
-    res.json(results);
+    const { username } = req.tokenData
+    const user = await User.findOne({ username }).populate('vehicles')
+    console.log(user.vehicles)
+    res.json(user.vehicles);
 })
 
-app.get('/vehicles/:id', async (req, res) => {
+app.get('/vehicles/:id', validateToken, async (req, res) => {
     const { id } = req.params;
     const result = await Vehicle.findById(id).populate('fuel_logs');
     res.json(result);
 })
-app.delete('/vehicles/:id', async (req, res) => {
-    console.log("deleting vehicle")
+
+app.delete('/vehicles/:id', validateToken, async (req, res) => {
+    const { username } = req.tokenData;
+
     const { id } = req.params;
+    console.log(id)
+    const user = await User.updateOne({ username: username },
+        {
+            $pull: {
+                vehicles: id
+            }
+        });
     const deletedVehicle = await Vehicle.findByIdAndDelete(id);
-    console.log(deletedVehicle);
     res.json("Vehicle Deleted!");
 })
 
-app.post('/vehicles/:id/fuellogs/new', async (req, res) => {
+app.post('/vehicles/:id/fuellogs/new', validateToken, async (req, res) => {
     const { id } = req.params;
 
     const newFuelLog = FuelLog(req.body);
     await newFuelLog.save();
 
-    const currentVehicle = await Vehicle.findOneAndUpdate({ _id: id },
+    await Vehicle.findOneAndUpdate({ _id: id },
         {
             $push: {
                 "fuel_logs": { $each: [newFuelLog.id], $position: 0 }
@@ -107,35 +158,44 @@ app.post('/vehicles/:id/fuellogs/new', async (req, res) => {
         {
             new: true,
         });
-    console.log(currentVehicle);
-
-    console.log(newFuelLog);
-
     res.send("Fuel log saved");
 })
 
-app.post('/vehicles/new', async (req, res) => {
-    console.log(req.body);
+app.get('/vehicles/:id/fuellogs/:log_id', validateToken, async (req, res) => {
+    const { log_id } = req.params;
+    const fuellog = await FuelLog.findById(log_id);
+    res.send(fuellog)
+})
+
+app.patch('/vehicles/:id/fuellogs/:log_id', validateToken, async (req, res) => {
+    const { log_id } = req.params;
+    const fuellog = await FuelLog.findByIdAndUpdate(log_id, req.body);
+    console.log(fuellog);
+    res.send("Fuel Log Editted")
+})
+
+app.delete('/vehicles/:id/fuellogs/:log_id', validateToken, async (req, res) => {
+    const { id, log_id } = req.params;
+    console.log(id, log_id);
+    await Vehicle.updateOne({ _id: id }, {
+        $pull: {
+            fuel_logs: log_id
+        }
+    })
+    await FuelLog.findByIdAndDelete(log_id);
+    res.json("Fuel Log Deleted")
+})
+
+app.post('/vehicles/new', validateToken, async (req, res) => {
+    const { username } = (req.tokenData);
+    const currentUser = await User.findOne({ username });
+
     const newVehicle = Vehicle(req.body);
     await newVehicle.save();
 
-    res.redirect("/vehicles");
-})
-
-app.get('/api', async (req, res) => {
-    const findMessage = await Message.findOne({});
-    const encrypted = await bcrypt.hash(findMessage.message, 12);
-    const result = await bcrypt.compare(findMessage.message, encrypted);
-    res.json({
-        message: findMessage.message,
-        encrypted: encrypted,
-        result: result
-
-    })
-})
-
-app.get('/user', async (req, res) => {
-    res.json(true);
+    currentUser.vehicles.push(newVehicle.id);
+    currentUser.save();
+    res.json("New Vehicle Saved");
 })
 
 // All other GET requests not handled before will return our React app

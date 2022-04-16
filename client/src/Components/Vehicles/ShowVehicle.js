@@ -3,10 +3,11 @@ import { Link, useParams } from 'react-router-dom'
 import axios from 'axios';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, defaults } from 'chart.js/auto';
+import { headerConfig } from '../../Utils/Utils';
 
 const ShowVehicle = () => {
     const { id } = useParams();
-
+    const header_config = headerConfig();
     const [vehicle, setVehicle] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [fuelLogs, setFuelLogs] = useState({})
@@ -21,11 +22,23 @@ const ShowVehicle = () => {
 
 
     const [mpgArray, setMPGArray] = useState([]);
-    const [currentMileage, setCurrentMileage] = useState('');
+    const [currentMileage, setCurrentMileage] = useState(0);
+
+    function deleteFuelLog(log_id) {
+        axios.delete(`/vehicles/${id}/fuellogs/${log_id}`,
+            {
+                headers: header_config,
+                withCredentials: true
+            })
+            .then(
+                window.location.reload()
+            )
+    }
 
     useEffect(() => {
         axios.get(`/vehicles/${id}`,
             {
+                headers: header_config,
                 withCredentials: true
             }
         )
@@ -33,38 +46,43 @@ const ShowVehicle = () => {
                 setVehicle(res.data);
                 const fuel_logs = res.data.fuel_logs;
                 setFuelLogs(fuel_logs);
-                setCurrentMileage(fuel_logs[0].current_mileage.toString());
 
                 let best_mpg = 0;
                 let overall_mpg = 0;
 
                 let total_gallons = 0;
                 let total_price = 0;
-                let total_miles = 0;
 
-                for (let i in fuel_logs) {
+                if (fuel_logs.length > 0) {
+                    setCurrentMileage(fuel_logs[0].current_mileage);
+                    setRecentMPG(fuel_logs[0].mpg.toFixed(1));
+                    let total_miles = 0;
+                    for (let i in fuel_logs) {
 
-                    if (i < 5) {
-                        setMPGArray(prev => [...prev, fuel_logs[i].mpg]);
+                        if (i < 5) {
+                            setMPGArray(prev => [...prev, fuel_logs[i].mpg]);
+                        }
+                        total_gallons += fuel_logs[i].total_gallons;
+                        total_price += fuel_logs[i].total_price;
+
+                        if (fuel_logs[i].mpg > best_mpg) {
+                            best_mpg = fuel_logs[i].mpg;
+                        }
+                        overall_mpg += fuel_logs[i].mpg;
+                        total_miles += fuel_logs[i].total_miles;
                     }
-                    total_gallons += fuel_logs[i].total_gallons;
-                    total_miles += fuel_logs[i].total_miles;
-                    total_price += fuel_logs[i].total_price;
+                    overall_mpg = (overall_mpg / fuel_logs.length).toFixed(1);
+                    setTotalMiles(total_miles);
+                    setBestMPG(best_mpg.toFixed(1));
+                    setOverallMPG(overall_mpg);
 
-                    if (fuel_logs[i].mpg > best_mpg) {
-                        best_mpg = fuel_logs[i].mpg;
-                    }
-                    overall_mpg += fuel_logs[i].mpg;
+                    setTotalGallons(total_gallons.toFixed(1))
+                    setTotalMiles(total_miles);
+                    setTotalPrice(total_price.toFixed(2));
                 }
 
-                overall_mpg = (overall_mpg / fuel_logs.length).toFixed(1);
-                setRecentMPG(fuel_logs[0].mpg);
-                setBestMPG(best_mpg);
-                setOverallMPG(overall_mpg);
 
-                setTotalGallons(total_gallons.toFixed(1))
-                setTotalMiles(total_miles);
-                setTotalPrice(total_price.toFixed(2));
+
 
                 setIsLoading(false);
             })
@@ -189,17 +207,24 @@ const ShowVehicle = () => {
 
                         <div className='my-3'>
                             <h2>Fuel Logs</h2>
-                            <Link className='btn btn-success' to={`/vehicles/${id}/fuellogs/new`} state={{ current_mileage: fuelLogs[0].current_mileage }}>Add Fuel Log</Link>
+                            <Link className='btn btn-success' to={`/vehicles/${id}/fuellogs/new`} state={{ current_mileage: currentMileage }}>Add Fuel Log</Link>
 
                             {
                                 fuelLogs.map((element, index) => {
                                     return (
-                                        <div className='row m-3 border border-2 border-dark rounded-3 fs-5' key={index}>
-                                            <div className="col border-end"> <p className='fw-bold'>MPG <span className='d-block fw-normal'>{element.mpg}</span></p>  </div>
-                                            <div className="col border-end"> <p className='fw-bold'>Total Miles <span className='d-block fw-normal'>{element.total_miles}</span></p> </div>
-                                            <div className="col border-end"> <p className='fw-bold'>Total Gallons <span className='d-block fw-normal'>{element.total_gallons.toFixed(2)}</span></p></div>
-                                            <div className="col "> <p className='fw-bold'>Total Price <span className='d-block fw-normal'>${element.total_price}</span></p></div>
+                                        <div key={index} className=''>
+                                            <div className='row m-3 border border-2 border-dark rounded-3 fs-5' key={index}>
+                                                <div className="col border-end"> <p className='fw-bold'>MPG <span className='d-block fw-normal'>{element.mpg.toFixed(1)}</span></p>  </div>
+                                                <div className="col border-end"> <p className='fw-bold'>Total Miles <span className='d-block fw-normal'>{element.total_miles}</span></p> </div>
+                                                <div className="col border-end"> <p className='fw-bold'>Total Gallons <span className='d-block fw-normal'>{element.total_gallons.toFixed(2)}</span></p></div>
+                                                <div className="col "> <p className='fw-bold'>Total Price <span className='d-block fw-normal'>${element.total_price}</span></p></div>
+                                                <div className="col my-auto d-flex flex-column">
+                                                    <Link className='btn btn-success my-1' to={`/vehicles/${id}/fuellogs/${element._id}`}>Edit</Link>
+                                                    <button className='btn btn-danger my-1' onClick={() => deleteFuelLog(element._id)}>Delete</button>
+                                                </div>
+                                            </div>
                                         </div>
+
                                     )
                                 })
                             }

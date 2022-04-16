@@ -3,15 +3,13 @@ import { createContext, useEffect, useState } from "react";
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-    const [auth, setAuth] = useState(false);
+    const [auth, setAuth] = useState('');
 
     useEffect(() => {
-        console.log("Initializing")
-        const prevAuth = sessionStorage.getItem('isAuthenticated');
-        if (prevAuth === 'true') {
-            setAuth(true);
-        }
-    })
+        const prevAuth = sessionStorage.getItem('token');
+        setAuth(prevAuth);
+    }, [])
+
 
     return (
         <AuthContext.Provider value={{ auth, setAuth }}>
