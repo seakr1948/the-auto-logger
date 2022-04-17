@@ -17,6 +17,8 @@ import PrivateWrapper from './Components/PrivateWrapper';
 import LoginForm from './Components/LoginForm';
 import RegisterForm from './Components/RegisterForm';
 import EditFuelLog from './Components/FuelLogs/EditFuelLog';
+import ShowVehicleStats from './Components/Vehicles/ShowVehicleStats';
+import NotFound from './Components/NotFound';
 
 function App() {
 
@@ -34,10 +36,12 @@ function App() {
               <Route index element={<AllVehicles />} />
               <Route path='new' element={<AddVehicle />} />
               <Route path=':id' element={<ShowVehicle />} />
+              <Route path=':id/stats' element={<ShowVehicleStats />} />
               <Route path=':id/fuellogs/new' element={<NewFuelLog />} />
               <Route path=':id/fuellogs/:log_id' element={<EditFuelLog />} />
             </Route >
           </Route>
+          <Route path='*' element={<NotFound />} />
 
 
         </Routes>

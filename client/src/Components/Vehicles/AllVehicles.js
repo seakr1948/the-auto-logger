@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { headerConfig } from '../../Utils/Utils';
 
 const AllVehicles = () => {
-
+    const [token, setToken] = useState(sessionStorage.getItem("token") || '');
     const header_config = headerConfig();
     const [vehicles, setVehicles] = useState([]);
 
@@ -12,25 +12,21 @@ const AllVehicles = () => {
         axios.delete(`/vehicles/${vehicle_id}`,
             {
                 withCredentials: true,
-                headers: header_config,
+                headers: {
+                    "authorization": token
+                }
             })
             .then(setVehicles(prev =>
                 prev.filter(vehicle => vehicle._id !== vehicle_id)
             ))
     }
 
-    function getUser() {
-        axios.get('/user',
-        )
-            .then(res => {
-                console.log(res.data);
-
-            })
-    }
     useEffect(() => {
         axios.get('/vehicles',
             {
-                headers: header_config,
+                headers: {
+                    "authorization": sessionStorage.getItem('token')
+                },
                 withCredentials: true,
             })
             .then(res => setVehicles(res.data))

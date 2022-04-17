@@ -6,6 +6,7 @@ import { Chart as ChartJS, defaults } from 'chart.js/auto';
 import { headerConfig } from '../../Utils/Utils';
 
 const ShowVehicle = () => {
+    const [token, setToken] = useState(sessionStorage.getItem("token") || '');
     const { id } = useParams();
     const header_config = headerConfig();
     const [vehicle, setVehicle] = useState({});
@@ -27,7 +28,9 @@ const ShowVehicle = () => {
     function deleteFuelLog(log_id) {
         axios.delete(`/vehicles/${id}/fuellogs/${log_id}`,
             {
-                headers: header_config,
+                headers: {
+                    "authorization": token
+                },
                 withCredentials: true
             })
             .then(
@@ -38,7 +41,9 @@ const ShowVehicle = () => {
     useEffect(() => {
         axios.get(`/vehicles/${id}`,
             {
-                headers: header_config,
+                headers: {
+                    "authorization": token
+                },
                 withCredentials: true
             }
         )
@@ -199,6 +204,11 @@ const ShowVehicle = () => {
                                 <div className="col">
                                     <div className="p-3 border bg-light">
                                         <p className='text-center fw-bold'>Last Reported Odometer <span className='d-block fw-normal'>{currentMileage} Miles</span></p>
+                                    </div>
+                                </div>
+                                <div className="col">
+                                    <div className="p-3 border bg-light d-flex justify-content-center">
+                                        <Link className="btn btn-info" to={`/vehicles/${id}/stats`}>See More Stats</Link>
                                     </div>
                                 </div>
 
