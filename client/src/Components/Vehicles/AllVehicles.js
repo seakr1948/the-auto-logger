@@ -1,9 +1,10 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { headerConfig } from '../../Utils/Utils';
-
+import AuthContext from '../../Context/AuthProvider';
 const AllVehicles = () => {
+    const { auth } = useContext(AuthContext);
     const [token, setToken] = useState(sessionStorage.getItem("token") || '');
     const header_config = headerConfig();
     const [vehicles, setVehicles] = useState([]);

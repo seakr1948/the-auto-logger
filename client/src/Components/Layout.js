@@ -4,7 +4,7 @@ import Footer from './Footer'
 import NavBar from './NavBar'
 const Layout = () => {
     return (
-        <div >
+        <div className='flex-wrapper'>
             <NavBar />
             <Outlet />
             <Footer />
