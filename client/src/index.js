@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './Context/AuthProvider';
 import axios from 'axios';
 
-axios.defaults.headers.common["authorization"] = sessionStorage.getItem('token');
+axios.defaults.headers["authorization"] = sessionStorage.getItem('token');
 
 ReactDOM.render(
   <React.StrictMode>

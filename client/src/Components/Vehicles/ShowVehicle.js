@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, defaults } from 'chart.js/auto';
 import { headerConfig } from '../../Utils/Utils';
+import AuthContext from '../../Context/AuthProvider';
 
 const ShowVehicle = () => {
     const [token, setToken] = useState(sessionStorage.getItem("token") || '');
+    const { auth } = useContext(AuthContext);
     const { id } = useParams();
     const header_config = headerConfig();
     const [vehicle, setVehicle] = useState({});
@@ -42,7 +44,7 @@ const ShowVehicle = () => {
         axios.get(`/vehicles/${id}`,
             {
                 headers: {
-                    "authorization": token
+                    "authorization": auth
                 },
                 withCredentials: true
             }

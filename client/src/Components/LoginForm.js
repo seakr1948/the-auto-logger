@@ -35,7 +35,6 @@ const LoginForm = () => {
             .then(res => {
                 const result = res.data;
                 if (result) {
-                    console.log(result.token)
                     sessionStorage.setItem("token", result.token);
                     setAuth(result.token);
                     navigate('/vehicles');
