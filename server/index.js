@@ -122,13 +122,13 @@ app.get(BASE_URL + '/vehicles', validateToken, async (req, res) => {
     res.json(user.vehicles);
 })
 
-app.get('/vehicles/:id', validateToken, async (req, res) => {
+app.get(BASE_URL + '/vehicles/:id', validateToken, async (req, res) => {
     const { id } = req.params;
     const result = await Vehicle.findById(id).populate('fuel_logs');
     res.json(result);
 })
 
-app.delete('/vehicles/:id', validateToken, async (req, res) => {
+app.delete(BASE_URL + '/vehicles/:id', validateToken, async (req, res) => {
     const { username } = req.tokenData;
 
     const { id } = req.params;
@@ -143,7 +143,7 @@ app.delete('/vehicles/:id', validateToken, async (req, res) => {
     res.json("Vehicle Deleted!");
 })
 
-app.post('/vehicles/:id/fuellogs/new', validateToken, async (req, res) => {
+app.post(BASE_URL + '/vehicles/:id/fuellogs/new', validateToken, async (req, res) => {
     const { id } = req.params;
 
     const newFuelLog = FuelLog(req.body);
@@ -161,20 +161,20 @@ app.post('/vehicles/:id/fuellogs/new', validateToken, async (req, res) => {
     res.send("Fuel log saved");
 })
 
-app.get('/vehicles/:id/fuellogs/:log_id', validateToken, async (req, res) => {
+app.get(BASE_URL + '/vehicles/:id/fuellogs/:log_id', validateToken, async (req, res) => {
     const { log_id } = req.params;
     const fuellog = await FuelLog.findById(log_id);
     res.send(fuellog)
 })
 
-app.patch('/vehicles/:id/fuellogs/:log_id', validateToken, async (req, res) => {
+app.patch(BASE_URL + '/vehicles/:id/fuellogs/:log_id', validateToken, async (req, res) => {
     const { log_id } = req.params;
     const fuellog = await FuelLog.findByIdAndUpdate(log_id, req.body);
     console.log(fuellog);
     res.send("Fuel Log Editted")
 })
 
-app.delete('/vehicles/:id/fuellogs/:log_id', validateToken, async (req, res) => {
+app.delete(BASE_URL + '/vehicles/:id/fuellogs/:log_id', validateToken, async (req, res) => {
     const { id, log_id } = req.params;
     console.log(id, log_id);
     await Vehicle.updateOne({ _id: id }, {
@@ -186,7 +186,7 @@ app.delete('/vehicles/:id/fuellogs/:log_id', validateToken, async (req, res) => 
     res.json("Fuel Log Deleted")
 })
 
-app.post('/vehicles/new', validateToken, async (req, res) => {
+app.post(BASE_URL + '/vehicles/new', validateToken, async (req, res) => {
     const { username } = (req.tokenData);
     const currentUser = await User.findOne({ username });
 
