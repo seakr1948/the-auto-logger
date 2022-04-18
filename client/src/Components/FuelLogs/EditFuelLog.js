@@ -6,7 +6,6 @@ import axiosApiInstance from '../../interceptor/interceptor';
 
 const EditFuelLog = () => {
     const navigate = useNavigate();
-    const header_config = headerConfig();
     const { id, log_id } = useParams();
     const [pastMileage, setPastMileage] = useState('');
     const [currentMileage, setCurrentMileage] = useState('');
