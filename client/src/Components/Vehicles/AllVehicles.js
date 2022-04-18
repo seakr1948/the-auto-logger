@@ -3,6 +3,8 @@ import React, { useEffect, useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { headerConfig } from '../../Utils/Utils';
 import AuthContext from '../../Context/AuthProvider';
+import axiosApiInstance from '../../interceptor/interceptor';
+
 const AllVehicles = () => {
     const { auth } = useContext(AuthContext);
     const [token, setToken] = useState(sessionStorage.getItem("token") || '');
@@ -23,13 +25,8 @@ const AllVehicles = () => {
     }
 
     useEffect(() => {
-        axios.get('/vehicles',
-            {
-                headers: {
-                    "authorization": sessionStorage.getItem('token')
-                },
-                withCredentials: true,
-            })
+        axiosApiInstance.get('/vehicles')
+
             .then(res => setVehicles(res.data))
     }, [])
 

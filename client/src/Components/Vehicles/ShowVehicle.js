@@ -5,6 +5,7 @@ import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, defaults } from 'chart.js/auto';
 import { headerConfig } from '../../Utils/Utils';
 import AuthContext from '../../Context/AuthProvider';
+import axiosApiInstance from '../../interceptor/interceptor';
 
 const ShowVehicle = () => {
     const [token, setToken] = useState(sessionStorage.getItem("token") || '');
@@ -41,13 +42,8 @@ const ShowVehicle = () => {
     }
 
     useEffect(() => {
-        const axiosInstance = axios.create({
-            headers: {
-                "authorization": auth
-            },
-            withCredentials: true
-        });
-        axiosInstance.get(`/vehicles/${id}`
+
+        axiosApiInstance.get(`/vehicles/${id}`
         )
             .then((res) => {
                 setVehicle(res.data);
