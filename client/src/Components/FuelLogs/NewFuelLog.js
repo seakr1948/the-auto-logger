@@ -2,12 +2,10 @@ import React, { useEffect } from 'react'
 import { useState } from 'react';
 import { handleForm } from '../../Utils/Utils'
 import { useLocation, useParams, Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { headerConfig } from '../../Utils/Utils';
+import axiosApiInstance from '../../interceptor/interceptor';
 
 const NewFuelLog = () => {
     const navigate = useNavigate();
-    const header_config = headerConfig();
     const { id } = useParams();
     const data = useLocation();
     const [pastMileage, setPastMileage] = useState('');
@@ -32,7 +30,7 @@ const NewFuelLog = () => {
         const total_miles = (currentMileage - pastMileage)
         const mpg = total_miles / totalGallons;
 
-        axios.post(`/vehicles/${id}/fuellogs/new`,
+        axiosApiInstance.post(`/vehicles/${id}/fuellogs/new`,
             {
                 current_mileage: parseInt(currentMileage),
                 past_mileage: parseInt(pastMileage),
@@ -41,10 +39,6 @@ const NewFuelLog = () => {
                 total_price: parseFloat(totalPrice),
                 total_miles: parseInt(total_miles),
                 mpg: parseFloat(mpg)
-            },
-            {
-                headers: header_config,
-                withCredentials: true
             })
             .then(navigate(`/vehicles/${id}`))
     }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import axiosApiInstance from '../../interceptor/interceptor';
 import { headerConfig } from '../../Utils/Utils';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, defaults } from 'chart.js/auto';
@@ -83,7 +83,7 @@ const ShowVehicleStats = () => {
     }
 
     useEffect(() => {
-        axios.get(`/vehicles/${id}`,
+        axiosApiInstance.get(`/vehicles/${id}`,
             {
                 headers: header_config,
                 withCredentials: true

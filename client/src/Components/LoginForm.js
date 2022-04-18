@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import AuthContext from '../Context/AuthProvider';
 import { handleForm } from '../Utils/Utils';
-import axios from 'axios';
+import axiosApiInstance from '../interceptor/interceptor';
 
 
 const LoginForm = () => {
@@ -13,19 +13,8 @@ const LoginForm = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    function getUser() {
-        axios.get('/user',
-            {
-                withCredentials: true,
-            })
-            .then(res => {
-                console.log(res.data);
-
-            })
-    }
-
     function login() {
-        axios.post('/login', {
+        axiosApiInstance.post('/login', {
             username,
             password
         },

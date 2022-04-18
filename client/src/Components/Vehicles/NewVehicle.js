@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { handleForm } from '../../Utils/Utils';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { headerConfig } from '../../Utils/Utils';
+import axiosApiInstance from '../../interceptor/interceptor';
 
 
 
 const NewVehicle = () => {
-    const header_config = headerConfig();
+
     const [make, setMake] = useState('');
     const [model, setModel] = useState('');
     const [year, setYear] = useState('2020');
@@ -23,7 +22,7 @@ const NewVehicle = () => {
         for (let i = 2020; i >= 1992; i--) {
             setYearsArray(prev => [...prev, i]);
         }
-        axios.get('/carlist')
+        axiosApiInstance.get('/carlist')
             .then(res => {
 
                 setMakeList(res.data.make_list.sort());
@@ -32,7 +31,7 @@ const NewVehicle = () => {
     }, []);
 
     useEffect(() => {
-        axios.get('/getmake', {
+        axiosApiInstance.get('/getmake', {
             params: {
                 year, make
             }
@@ -41,15 +40,11 @@ const NewVehicle = () => {
     }, [make, year])
 
     async function addNewVehicle() {
-        axios.post('/vehicles/new',
+        axiosApiInstance.post('/vehicles/new',
             {
                 make,
                 model,
                 year
-            },
-            {
-                headers: header_config,
-                withCredentials: true,
             })
             .then(res => console.log(res.data))
             .then(navigate('/vehicles'))

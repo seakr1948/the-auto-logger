@@ -1,17 +1,14 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, defaults } from 'chart.js/auto';
-import { headerConfig } from '../../Utils/Utils';
-import AuthContext from '../../Context/AuthProvider';
 import axiosApiInstance from '../../interceptor/interceptor';
 
 const ShowVehicle = () => {
-    const [token, setToken] = useState(sessionStorage.getItem("token") || '');
-    const { auth } = useContext(AuthContext);
+
+
     const { id } = useParams();
-    const header_config = headerConfig();
     const [vehicle, setVehicle] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [fuelLogs, setFuelLogs] = useState({})
@@ -29,13 +26,7 @@ const ShowVehicle = () => {
     const [currentMileage, setCurrentMileage] = useState(0);
 
     function deleteFuelLog(log_id) {
-        axios.delete(`/vehicles/${id}/fuellogs/${log_id}`,
-            {
-                headers: {
-                    "authorization": token
-                },
-                withCredentials: true
-            })
+        axiosApiInstance.delete(`/vehicles/${id}/fuellogs/${log_id}`)
             .then(
                 window.location.reload()
             )

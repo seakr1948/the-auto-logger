@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axiosApiInstance from '../interceptor/interceptor';
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { handleForm } from '../Utils/Utils'
@@ -11,7 +11,7 @@ const RegisterForm = () => {
     const navigate = useNavigate();
 
     function addUser() {
-        axios.post('/register',
+        axiosApiInstance.post('/register',
             {
                 username,
                 email,

@@ -2,8 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react';
 import { handleForm } from '../../Utils/Utils'
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { headerConfig } from '../../Utils/Utils';
+import axiosApiInstance from '../../interceptor/interceptor';
 
 const EditFuelLog = () => {
     const navigate = useNavigate();
@@ -19,7 +18,7 @@ const EditFuelLog = () => {
         const total_miles = (currentMileage - pastMileage)
         const mpg = total_miles / totalGallons;
 
-        axios.patch(`/vehicles/${id}/fuellogs/${log_id}`,
+        axiosApiInstance.patch(`/vehicles/${id}/fuellogs/${log_id}`,
             {
                 current_mileage: parseInt(currentMileage),
                 past_mileage: parseInt(pastMileage),
@@ -28,20 +27,13 @@ const EditFuelLog = () => {
                 total_price: parseFloat(totalPrice),
                 total_miles: parseInt(total_miles),
                 mpg: parseFloat(mpg)
-            },
-            {
-                headers: header_config,
-                withCredentials: true
             })
             .then(navigate(`/vehicles/${id}`))
     }
 
     useEffect(() => {
-        axios.get(`/vehicles/${id}/fuellogs/${log_id}`,
-            {
-                headers: header_config,
-                withCredentials: true
-            }).then(res => {
+        axiosApiInstance.get(`/vehicles/${id}/fuellogs/${log_id}`)
+            .then(res => {
                 const fuel_log = res.data;
                 setPastMileage(fuel_log.past_mileage)
                 setCurrentMileage(fuel_log.current_mileage)

@@ -64,7 +64,7 @@ app.post("/register", async (req, res) => {
     })
 })
 
-app.post("/login", async (req, res, next) => {
+app.post(BASE_URL + "/login", async (req, res, next) => {
     const { username, password } = req.body;
     console.log(req.body);
 
@@ -90,14 +90,14 @@ app.get("/user", (req, res) => {
     res.send(req.user);
 })
 
-app.get("/carlist", async (req, res) => {
+app.get(BASE_URL + "/carlist", async (req, res) => {
     const makelist = await loc.getCarMakes();
     res.json({
         make_list: makelist
     })
 })
 
-app.get("/getmake", async (req, res) => {
+app.get(BASE_URL + "/getmake", async (req, res) => {
 
     let { year, make } = req.query;
     year = parseInt(year);
