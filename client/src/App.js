@@ -34,11 +34,11 @@ function App() {
           <Route element={<PrivateWrapper user={auth} />}>
             <Route path='/vehicles' element={<Layout />} >
               <Route index element={<AllVehicles />} />
-              {/* <Route path='new' element={<AddVehicle />} />
+              <Route path='new' element={<AddVehicle />} />
               <Route path=':id' element={<ShowVehicle />} />
               <Route path=':id/stats' element={<ShowVehicleStats />} />
               <Route path=':id/fuellogs/new' element={<NewFuelLog />} />
-              <Route path=':id/fuellogs/:log_id' element={<EditFuelLog />} /> */}
+              <Route path=':id/fuellogs/:log_id' element={<EditFuelLog />} />
             </Route >
           </Route>
           <Route path='*' element={<NotFound />} />

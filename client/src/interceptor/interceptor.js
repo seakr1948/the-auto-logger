@@ -8,7 +8,7 @@ console.log("interceptor");
 axiosApiInstance.interceptors.request.use(
   async (config) => {
     console.log(sessionStorage.getItem("token"));
-
+    config.url = '/api' + config.url;
     config.headers = {
       authorization: sessionStorage.getItem('token')
     }

@@ -3,7 +3,7 @@
 require('dotenv').config();
 const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT || 3001;
-
+const BASE_URL = '/api';
 // Imports
 const express = require("express");
 const app = express();
@@ -114,7 +114,7 @@ app.get("/getmake", async (req, res) => {
 
 })
 
-app.get('/vehicles', validateToken, async (req, res) => {
+app.get(BASE_URL + '/vehicles', validateToken, async (req, res) => {
     console.log("Getting vehicles");
     const { username } = req.tokenData
     const user = await User.findOne({ username }).populate('vehicles')
