@@ -1,24 +1,14 @@
-import axios from 'axios';
+
 import React, { useEffect, useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { headerConfig } from '../../Utils/Utils';
-import AuthContext from '../../Context/AuthProvider';
 import axiosApiInstance from '../../interceptor/interceptor';
 
 const AllVehicles = () => {
-    const { auth } = useContext(AuthContext);
-    const [token, setToken] = useState(sessionStorage.getItem("token") || '');
-    const header_config = headerConfig();
+
     const [vehicles, setVehicles] = useState([]);
 
     function deleteVehicle(vehicle_id) {
-        axios.delete(`/vehicles/${vehicle_id}`,
-            {
-                withCredentials: true,
-                headers: {
-                    "authorization": token
-                }
-            })
+        axiosApiInstance.delete(`/vehicles/${vehicle_id}`)
             .then(setVehicles(prev =>
                 prev.filter(vehicle => vehicle._id !== vehicle_id)
             ))
@@ -26,7 +16,6 @@ const AllVehicles = () => {
 
     useEffect(() => {
         axiosApiInstance.get('/vehicles')
-
             .then(res => setVehicles(res.data))
     }, [])
 

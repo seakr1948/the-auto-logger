@@ -4,9 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './Context/AuthProvider';
-import axios from 'axios';
 
-axios.defaults.headers["authorization"] = sessionStorage.getItem('token');
 
 ReactDOM.render(
   <React.StrictMode>
