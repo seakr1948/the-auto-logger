@@ -41,13 +41,13 @@ const ShowVehicle = () => {
     }
 
     useEffect(() => {
-        axios.get(`/vehicles/${id}`,
-            {
-                headers: {
-                    "authorization": auth
-                },
-                withCredentials: true
-            }
+        const axiosInstance = axios.create({
+            headers: {
+                "authorization": auth
+            },
+            withCredentials: true
+        });
+        axiosInstance.get(`/vehicles/${id}`
         )
             .then((res) => {
                 setVehicle(res.data);
