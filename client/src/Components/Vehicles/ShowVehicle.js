@@ -91,7 +91,7 @@ const ShowVehicle = () => {
                             <span className="visually-hidden">Loading...</span>
                         </div>
                     </div> :
-                    <div>
+                    <div className='my-3'>
                         <h1 className='text-center'>
                             {vehicle.year} {vehicle.make} {vehicle.model}
                         </h1>
@@ -205,8 +205,11 @@ const ShowVehicle = () => {
                         </div>
 
                         <div className='my-3'>
-                            <h2>Fuel Logs</h2>
-                            <Link className='btn btn-success' to={`/vehicles/${id}/fuellogs/new`} state={{ current_mileage: currentMileage }}>Add Fuel Log</Link>
+                            <div className="mx-3">
+                                <h2>Fuel Logs</h2>
+                                <Link className='btn btn-success' to={`/vehicles/${id}/fuellogs/new`} state={{ current_mileage: currentMileage }}>Add Fuel Log</Link>
+                            </div>
+
 
                             {
                                 fuelLogs.map((element, index) => {

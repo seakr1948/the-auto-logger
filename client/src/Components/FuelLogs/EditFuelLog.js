@@ -86,7 +86,7 @@ const EditFuelLog = () => {
                     onChange={e => setTotalPrice(e.target.value)}
                 />
 
-                <button className='mt-3 btn btn-success'>Submit</button>
+                <button className='my-3 btn btn-success'>Submit</button>
             </form>
         </div>
     )

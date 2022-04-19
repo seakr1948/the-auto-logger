@@ -22,3 +22,78 @@
   background-color: #333;
   color: white;
 }
+
+.accent-bg{
+  background-color:hsl(150, 100%, 29%);
+}
+
+.container{
+  background-color: white;
+}
+
+.grid{
+  display: grid;
+}
+
+.chart-container{
+  width: 100%;
+}
+
+@media (min-width: 700px) {
+  .chart-container{
+    width: 100%;
+  }
+}
+
+@media (min-width: 1080px) {
+  .chart-container{
+    max-width: 25rem;
+  }
+}
+
+.cover-container {
+  max-width: 60vw;
+}
+
+.landing-body{
+  height: 100vh;
+}
+
+.landing-button{
+  background-color: transparent;
+  border: none;
+}
+
+.navlink-white{
+  color: white;
+  text-decoration: none;
+}
+
+.hover-outline{
+  margin-inline: 0.3em;
+  border-radius: 1em;
+  border: 2px solid transparent;
+  transition: border 0.2s ease-in;
+}
+
+.hover-outline:hover{
+  border: 2px solid white;
+}
+
+#video{
+  z-index: -2;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  
+}
+
+#overlay{
+  z-index: -1;
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  background-color: hsla(0, 0%, 0%, 0.7);
+}

@@ -10,9 +10,13 @@ const ShowVehicleStats = () => {
     const { id } = useParams();
     const [isLoading, setIsLoading] = useState(true);
     const [dataLabels, setDataLabels] = useState([]);
+
     const [fuellogs, setFuelLogs] = useState([]);
     const [mpgArray, setMPGArray] = useState([]);
     const [costArray, setCostArray] = useState([]);
+    const [costPerMileArray, setCostPerMileArray] = useState([]);
+    const [fuelPriceArray, setFuelPriceArray] = useState([]);
+
     const [gallonsArray, setGallonsArray] = useState([])
 
     function setData(data, data_label) {
@@ -39,7 +43,7 @@ const ShowVehicleStats = () => {
         return (
             {
                 scales: {
-                    yAxes: {
+                    y: {
                         grid: {
                             drawBorder: true,
                             color: "#444"
@@ -53,7 +57,7 @@ const ShowVehicleStats = () => {
                             }
                         },
                     },
-                    xAxes: {
+                    x: {
                         grid: {
                             drawBorder: true,
                             color: "#444"
@@ -95,7 +99,10 @@ const ShowVehicleStats = () => {
                 for (let i in fuel_logs) {
                     setMPGArray(prev => [...prev, fuel_logs[i].mpg]);
                     setCostArray(prev => [...prev, fuel_logs[i].total_price]);
-                    setGallonsArray(prev => [...prev, fuel_logs[i].total_gallons])
+                    setGallonsArray(prev => [...prev, fuel_logs[i].total_gallons]);
+                    setFuelPriceArray(prev => [...prev, fuel_logs[i].cost_per_gallon]);
+                    let cost_per_mile = (fuel_logs[i].total_miles / fuel_logs[i].total_price)
+                    setCostPerMileArray(prev => [...prev, cost_per_mile])
                 }
                 setDataLabels(data_labels);
                 setIsLoading(false)
@@ -104,34 +111,44 @@ const ShowVehicleStats = () => {
     }, []);
     return (
         <div className='container'>
-            <h1>Vehicle Stats</h1>
+            <h1 className='mt-3'>Vehicle Stats</h1>
             {
                 isLoading ?
                     <div>
                         loading
                     </div>
                     :
-                    <div className='grid'>
-
-                        <div className='chart-container bg-dark rounded p-3'>
+                    <div className='my-5 d-flex flex-row flex-wrap'>
+                        <div className='chart-container bg-dark rounded p-3 m-3'>
                             <Line
                                 data={setData(mpgArray, 'mpg')}
                                 options={setChartOption("Recent MPG")}
                             />
                         </div>
-                        <div className='chart-container bg-dark rounded-3 p-3'>
+                        <div className='chart-container bg-dark rounded-3 p-3 m-3'>
                             <Line
-                                data={setData(costArray, 'Cost')}
+                                data={setData(costArray, 'Total Cost')}
                                 options={setChartOption("Cost Per Fuelup")}
                             />
                         </div>
-                        <div className='chart-container bg-dark rounded-3 p-3'>
+                        <div className='chart-container bg-dark rounded-3 p-3 m-3'>
                             <Line
                                 data={setData(gallonsArray, 'Gallons')}
                                 options={setChartOption("Gallons Per Fuelup")}
                             />
                         </div>
-
+                        <div className='chart-container bg-dark rounded-3 p-3 m-3'>
+                            <Line
+                                data={setData(costPerMileArray, 'cost per mile')}
+                                options={setChartOption("Cost Per Mile")}
+                            />
+                        </div>
+                        <div className='chart-container bg-dark rounded-3 p-3 m-3'>
+                            <Line
+                                data={setData(fuelPriceArray, 'Price per gallon')}
+                                options={setChartOption("Fuel Price Per Gallon")}
+                            />
+                        </div>
                     </div>
             }
         </div>

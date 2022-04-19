@@ -22,7 +22,7 @@ let list = loc.getCarsByMakeObj();
 const Vehicle = require('./models/Vehicle.model');
 const User = require('./models/User.model');
 const FuelLog = require('./models/FuelLog.model');
-const Message = require('./models/Message.model');
+
 const { generateAccessToken, validateToken } = require('../client/src/middleware/Validation');
 
 // Mongoose connection
@@ -83,11 +83,6 @@ app.post(BASE_URL + "/login", async (req, res, next) => {
         res.status(401).json("Username/Password Invalid")
     }
 
-})
-
-app.get("/user", (req, res) => {
-    console.log(req.user);
-    res.send(req.user);
 })
 
 app.get(BASE_URL + "/carlist", async (req, res) => {
